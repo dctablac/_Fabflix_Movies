@@ -1,4 +1,4 @@
-package edu.uci.ics.UCNETID.service.movies.configs;
+package edu.uci.ics.dtablac.service.movies.configs;
 
 import java.util.Map;
 
