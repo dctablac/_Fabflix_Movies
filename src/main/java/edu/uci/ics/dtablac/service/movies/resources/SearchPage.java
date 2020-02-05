@@ -56,44 +56,29 @@ public class SearchPage {
         // Returns resultCode of privilege request. If RC = 140, plevel is sufficient to see hidden movies.
         int privilegeRC = getPrivilegeLevel(servicePath, endpointPath, EMAIL, 4);
 
-        // Make ArrayList to store query headers, as Strings
-        ArrayList<String> queryHeaders = new ArrayList<String>();
-        // Add query headers
-        queryHeaders.add(TITLE);
-        if (YEAR != null) {
-            queryHeaders.add(YEAR.toString());
-        }
-        else {
-            queryHeaders.add(null);
-        }
-        queryHeaders.add(DIRECTOR);
-        queryHeaders.add(GENRE);
         if (HIDDEN != null) {
-            if (HIDDEN == true) { // User requests hidden movies shown.
+            if (HIDDEN = true) { // User requests hidden movies shown.
                 if (privilegeRC == 140) { // If privileged, show all movies.
-                    queryHeaders.add(null); // Passing null means movies will not be restricted for 'hidden' attribute.
+                    HIDDEN = null; // Passing null means movies will not be restricted for 'hidden' attribute.
                 }
                 else {
-                    queryHeaders.add("false"); // Only show movies that have hidden:false.
+                    HIDDEN = false; // Only show movies that have hidden:false.
                 }
             }
             else {
-                queryHeaders.add("false"); // User set hidden to be false. NOTE: maybe this case doesn't check?
+                HIDDEN = false; // User set hidden to be false. NOTE: maybe this case doesn't check?
             }
         }
         else {
-            queryHeaders.add("false"); // User does not query for hidden, regardless of privilege, so don't show hidden.
+            HIDDEN = false; // User does not query for hidden, regardless of privilege, so don't show hidden.
         }
-        queryHeaders.add(LIMIT.toString());
-        queryHeaders.add(OFFSET.toString());
-        queryHeaders.add(ORDERBY);
-        queryHeaders.add(DIRECTION);
 
 
 
         // Query headers
         try {
-            String query = buildSearchQuery(queryHeaders, privilegeRC);
+            String query = buildSearchQuery(TITLE, YEAR, DIRECTOR, GENRE, HIDDEN, LIMIT,
+                                            OFFSET, ORDERBY, DIRECTION, null);
             PreparedStatement ps = MoviesService.getCon().prepareStatement(query);
             ServiceLogger.LOGGER.info("Trying query: "+ps.toString());
             ResultSet rs = ps.executeQuery();

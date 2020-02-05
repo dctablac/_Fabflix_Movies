@@ -35,11 +35,6 @@ public class ThumbnailPage {
         String SESSION_ID = headers.getHeaderString("session_id");
         String TRANSACTION_ID = headers.getHeaderString("transaction_id");
 
-        // Get path to privilege
-        IdmConfigs idmConfigs = MoviesService.getIdmConfigs();
-        String servicePath = Utility.getServicePath(idmConfigs);
-        String endpointPath = idmConfigs.getPrivilegePath();
-
         // Declare request and response models
         ObjectMapper mapper = new ObjectMapper();
         RequestModel requestModel;
@@ -65,9 +60,6 @@ public class ThumbnailPage {
                 ServiceLogger.LOGGER.warning("No movies found with search parameters.");
                 return Utility.headerResponse(responseModel, EMAIL, SESSION_ID, TRANSACTION_ID);
             }
-
-            // Get privilege resultCode
-            int privilegeRC = Utility.getPrivilegeLevel(servicePath, endpointPath, EMAIL, 4);
 
             // Send query for thumbnails
             ResultSet rs = ThumbnailQuery.sendThumbnailQuery(movie_ids);

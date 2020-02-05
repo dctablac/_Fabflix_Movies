@@ -76,6 +76,15 @@ public class Utility {
         return builder.build();
     }
 
+    public static ResultSet preparePeopleQuery(String query, String name) throws SQLException{
+        PreparedStatement ps = MoviesService.getCon().prepareStatement(query);
+        ps.setString(1, name);
+        ServiceLogger.LOGGER.info("Trying query: "+ps.toString());
+        ResultSet rs = ps.executeQuery();
+        ServiceLogger.LOGGER.info("Query succeeded.");
+        return rs;
+    }
+
     public static ResultSet prepareThumbnailQuery (String query, String[] IDs, int ID_count) throws SQLException {
         PreparedStatement ps = MoviesService.getCon().prepareStatement(query);
         for (int i = 0; i < ID_count; i++) {
