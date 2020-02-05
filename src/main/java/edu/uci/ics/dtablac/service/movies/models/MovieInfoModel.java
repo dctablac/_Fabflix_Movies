@@ -48,41 +48,4 @@ public class MovieInfoModel extends MovieModel {
     public Object[] getGENRES() { return GENRES; }
     @JsonProperty(value = "people")
     public Object[] getPEOPLE() { return PEOPLE; }
-
-    public static void main(String[] args) {
-        System.out.println("MovieInfoModel Testing");
-
-        String movie_id = "tt4154796";
-        String title = "Avengers: Endgame";
-        Integer year = 2019;
-        String director = "Joe Russo";
-        Float rating = Float.parseFloat("8.6");
-        Integer num_votes = 5269;
-        String budget = "356000000";
-        String revenue = "2485499739";
-        String overview = "A cool movie";
-        String backdrop_path = "backdrop";
-        String poster_path = "poster";
-        Boolean hidden = false;
-
-        ArrayList<GenreModel> GMAL = new ArrayList<GenreModel>();
-        GenreModel GM1 = new GenreModel(420, "Action");
-        GMAL.add(GM1);
-        GenreModel GM2 = new GenreModel(421, "Romance");
-        GMAL.add(GM2);
-        Object[] GMList = GMAL.toArray();
-
-        ArrayList<PersonModel> PMAL = new ArrayList<PersonModel>();
-        PersonModel PM1 = new PersonModel(1, "Dre");
-        PMAL.add(PM1);
-        PersonModel PM2 = new PersonModel(2, "Dan");
-        PMAL.add(PM2);
-        Object[] PMList = PMAL.toArray();
-
-        MovieInfoModel MIM = new MovieInfoModel(
-                movie_id, title, year, director, rating, num_votes, budget,
-                revenue, overview, backdrop_path, poster_path, hidden, GMList, PMList);
-
-        System.out.println(MIM.getTITLE());
-    }
 }

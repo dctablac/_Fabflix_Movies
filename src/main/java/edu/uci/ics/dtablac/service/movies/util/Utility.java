@@ -1,6 +1,8 @@
 package edu.uci.ics.dtablac.service.movies.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.uci.ics.dtablac.service.movies.MoviesService;
+import edu.uci.ics.dtablac.service.movies.configs.IdmConfigs;
 import edu.uci.ics.dtablac.service.movies.logger.ServiceLogger;
 import edu.uci.ics.dtablac.service.movies.models.PrivilegeRequestModel;
 import edu.uci.ics.dtablac.service.movies.models.PrivilegeResponseModel;
@@ -11,6 +13,9 @@ import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Utility {
 
@@ -48,7 +53,8 @@ public class Utility {
         }
 
         // Do work with data contained in response model
-        ServiceLogger.LOGGER.info("priv resultCode: "+privResponseModel.getRESULTCODE());
+        // TODO: Maybe get rid of this logger?
+        ServiceLogger.LOGGER.info("Privilege resultCode: "+privResponseModel.getRESULTCODE());
         return privResponseModel.getRESULTCODE();
     }
 
@@ -68,6 +74,17 @@ public class Utility {
 
         // Return the response
         return builder.build();
+    }
+
+    public static ResultSet prepareThumbnailQuery (String query, String[] IDs, int ID_count) throws SQLException {
+        PreparedStatement ps = MoviesService.getCon().prepareStatement(query);
+        for (int i = 0; i < ID_count; i++) {
+            ps.setString(i+1, IDs[i]);
+        }
+        ServiceLogger.LOGGER.info("Trying query: "+ps.toString());
+        ResultSet rs = ps.executeQuery();
+        ServiceLogger.LOGGER.info("Query succeeded.");
+        return rs;
     }
 
     public static Integer checkLimit(Integer LIMIT) {
@@ -97,5 +114,12 @@ public class Utility {
         }
         return OFFSET;
     }
+
+    public static String getServicePath(IdmConfigs idmConfigs) {
+        String servicePath = idmConfigs.getScheme()+idmConfigs.getHostName()+":"+
+                idmConfigs.getPort()+idmConfigs.getPath();
+        return servicePath;
+    }
+
 
 }
