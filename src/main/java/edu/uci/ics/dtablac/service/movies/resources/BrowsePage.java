@@ -18,8 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static edu.uci.ics.dtablac.service.movies.resources.SearchPage.getPrivilegeLevel;
 import static edu.uci.ics.dtablac.service.movies.core.BrowseQuery.buildBrowseQuery;
+import static edu.uci.ics.dtablac.service.movies.util.Utility.*;
 
 @Path("browse/{phrase: .*}")
 public class BrowsePage {
@@ -33,18 +33,10 @@ public class BrowsePage {
                            @QueryParam("offset") Integer OFFSET,
                            @QueryParam("orderby") String ORDERBY,
                            @QueryParam("direction") String DIRECTION) {
-        if (!(LIMIT.equals(10) || LIMIT.equals(25) || LIMIT.equals(50) || LIMIT.equals(100))) {
-            LIMIT = 10;
-        }
-        if (!(ORDERBY.equals("title") || ORDERBY.equals("rating") || ORDERBY.equals("year"))) {
-            ORDERBY = "title";
-        }
-        if (!(DIRECTION.equals("asc") || DIRECTION.equals("desc"))) {
-            DIRECTION = "asc";
-        }
-        if (!(OFFSET.equals(0) || OFFSET%LIMIT == 0)) {
-            OFFSET = 0;
-        }
+        LIMIT = checkLimit(LIMIT);
+        ORDERBY = checkOrderBy(ORDERBY);
+        DIRECTION = checkDirection(DIRECTION);
+        OFFSET = checkOffset(OFFSET, LIMIT);
 
         IdmConfigs idmConfigs = MoviesService.getIdmConfigs();
         String servicePath = idmConfigs.getScheme() + idmConfigs.getHostName() + ":"
@@ -63,18 +55,8 @@ public class BrowsePage {
 
         // Make ArrayList to store query headers
         ArrayList<String> queryHeaders = new ArrayList<String>();
-        if (LIMIT != null) {
-            queryHeaders.add(LIMIT.toString());
-        }
-        else {
-            queryHeaders.add(null);
-        }
-        if (OFFSET != null) {
-            queryHeaders.add(OFFSET.toString());
-        }
-        else {
-            queryHeaders.add(null);
-        }
+        queryHeaders.add(LIMIT.toString());
+        queryHeaders.add(OFFSET.toString());
         queryHeaders.add(ORDERBY);
         queryHeaders.add(DIRECTION);
 
@@ -106,13 +88,17 @@ public class BrowsePage {
                 newMovie.setPOSTER_PATH(poster_path);
                 Boolean hidden = Boolean.parseBoolean(rs.getString("HIDDEN"));
                 newMovie.setHIDDEN(hidden);
-
+                if (privilegeRC != 140) {
+                    newMovie.setHIDDEN(null);
+                    newMovie.setBACKDROP_PATH(null);
+                    newMovie.setPOSTER_PATH(null);
+                }
                 movies.add(newMovie);
             }
             Object[] moviesArray = movies.toArray();
             if (moviesArray.length == 0) {
                 responseModel = new BrowseResponseModel(211,
-                        "No movies found with search parameters.", moviesArray);
+                        "No movies found with search parameters.", null);
                 ServiceLogger.LOGGER.warning("No movies found with search parameters.");
             }
             else {

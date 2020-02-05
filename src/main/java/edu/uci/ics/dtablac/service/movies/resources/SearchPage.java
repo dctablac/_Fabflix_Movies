@@ -1,32 +1,27 @@
 package edu.uci.ics.dtablac.service.movies.resources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uci.ics.dtablac.service.movies.MoviesService;
 import edu.uci.ics.dtablac.service.movies.configs.IdmConfigs;
 import edu.uci.ics.dtablac.service.movies.logger.ServiceLogger;
 import edu.uci.ics.dtablac.service.movies.models.MovieModel;
-import edu.uci.ics.dtablac.service.movies.models.PrivilegeRequestModel;
-import edu.uci.ics.dtablac.service.movies.models.PrivilegeResponseModel;
 import edu.uci.ics.dtablac.service.movies.models.SearchResponseModel;
-import org.glassfish.jersey.jackson.JacksonFeature;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.client.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static edu.uci.ics.dtablac.service.movies.core.SearchQuery.buildSearchQuery;
+import static edu.uci.ics.dtablac.service.movies.util.Utility.*;
 
 @Path("search")
 public class SearchPage {
@@ -34,26 +29,18 @@ public class SearchPage {
     @Produces(MediaType.APPLICATION_JSON)
     public Response search(@Context HttpHeaders headers,
                            @QueryParam("title") String TITLE,
-                           @QueryParam("year") Integer YEAR, // Integer
+                           @QueryParam("year") Integer YEAR,
                            @QueryParam("director") String DIRECTOR,
                            @QueryParam("genre") String GENRE,
-                           @QueryParam("hidden") Boolean HIDDEN, // Boolean
-                           @QueryParam("limit") Integer LIMIT, // Integer
-                           @QueryParam("offset") Integer OFFSET, // Integer
+                           @QueryParam("hidden") Boolean HIDDEN,
+                           @QueryParam("limit") Integer LIMIT,
+                           @QueryParam("offset") Integer OFFSET,
                            @QueryParam("orderby") String ORDERBY,
                            @QueryParam("direction") String DIRECTION){
-        if (!(LIMIT.equals(10) || LIMIT.equals(25) || LIMIT.equals(50) || LIMIT.equals(100))) {
-            LIMIT = 10;
-        }
-        if (!(ORDERBY.equals("title") || ORDERBY.equals("rating") || ORDERBY.equals("year"))) {
-            ORDERBY = "title";
-        }
-        if (!(DIRECTION.equals("asc") || DIRECTION.equals("desc"))) {
-            DIRECTION = "asc";
-        }
-        if (!(OFFSET.equals(0) || OFFSET%LIMIT == 0)) {
-            OFFSET = 0;
-        }
+        LIMIT = checkLimit(LIMIT);
+        ORDERBY = checkOrderBy(ORDERBY);
+        DIRECTION = checkDirection(DIRECTION);
+        OFFSET = checkOffset(OFFSET, LIMIT);
 
         IdmConfigs idmConfigs = MoviesService.getIdmConfigs();
         String servicePath = idmConfigs.getScheme()+idmConfigs.getHostName()+":"
@@ -70,8 +57,9 @@ public class SearchPage {
         // Returns resultCode of privilege request. If RC = 140, plevel is sufficient to see hidden movies.
         int privilegeRC = getPrivilegeLevel(servicePath, endpointPath, EMAIL, 4);
 
-        // Make ArrayList to store query headers
+        // Make ArrayList to store query headers, as Strings
         ArrayList<String> queryHeaders = new ArrayList<String>();
+        // Add query headers
         queryHeaders.add(TITLE);
         if (YEAR != null) {
             queryHeaders.add(YEAR.toString());
@@ -82,26 +70,27 @@ public class SearchPage {
         queryHeaders.add(DIRECTOR);
         queryHeaders.add(GENRE);
         if (HIDDEN != null) {
-            queryHeaders.add(HIDDEN.toString());
+            if (HIDDEN == true) { // User requests hidden movies shown.
+                if (privilegeRC == 140) { // If privileged, show all movies.
+                    queryHeaders.add(null); // Passing null means movies will not be restricted for 'hidden' attribute.
+                }
+                else {
+                    queryHeaders.add("false"); // Only show movies that have hidden:false.
+                }
+            }
+            else {
+                queryHeaders.add("false"); // User set hidden to be false. NOTE: maybe this case doesn't check?
+            }
         }
         else {
-            queryHeaders.add(null);
+            queryHeaders.add("false"); // User does not query for hidden, regardless of privilege, so don't show hidden.
         }
-        if (LIMIT != null) {
-            queryHeaders.add(LIMIT.toString());
-        }
-        else {
-            queryHeaders.add(null);
-        }
-        if (OFFSET != null) {
-            queryHeaders.add(OFFSET.toString());
-        }
-        else {
-            queryHeaders.add(null);
-        }
+        queryHeaders.add(LIMIT.toString());
+        queryHeaders.add(OFFSET.toString());
         queryHeaders.add(ORDERBY);
         queryHeaders.add(DIRECTION);
-        //ServiceLogger.LOGGER.info("Check");
+
+
 
         // Query headers
         try {
@@ -132,14 +121,17 @@ public class SearchPage {
                 newMovie.setPOSTER_PATH(poster_path);
                 Boolean hidden = Boolean.parseBoolean(rs.getString("HIDDEN"));
                 newMovie.setHIDDEN(hidden);
-                
-
+                if (privilegeRC != 140) {
+                    newMovie.setHIDDEN(null);
+                    newMovie.setPOSTER_PATH(null);
+                    newMovie.setBACKDROP_PATH(null);
+                }
                 movies.add(newMovie);
             }
             Object[] moviesArray = movies.toArray();
             if (moviesArray.length == 0) {
                 responseModel = new SearchResponseModel(211,
-                        "No movies found with search parameters.", moviesArray);
+                        "No movies found with search parameters.", null);
                 ServiceLogger.LOGGER.warning("No movies found with search parameters.");
             }
             else {
@@ -154,56 +146,7 @@ public class SearchPage {
         }
 
         // Return a response with same headers
-        Response.ResponseBuilder builder;
-        if (responseModel == null)
-            builder = Response.status(Status.BAD_REQUEST);
-        else
-            builder = Response.status(Status.OK).entity(responseModel);
-
-        // Pass along headers
-        builder.header("email", EMAIL);
-        builder.header("session_id", SESSION_ID);
-        builder.header("transaction_id", TRANSACTION_ID);
-
-        // Return the response
-        return builder.build();
+        return headerResponse(responseModel, EMAIL, SESSION_ID, TRANSACTION_ID);
     }
 
-    public static int getPrivilegeLevel(String newServicePath, String newEndpointPath, String email, Integer plvl) {
-        PrivilegeRequestModel privRequestModel = new PrivilegeRequestModel(email, plvl);
-        PrivilegeResponseModel privResponseModel = null;
-
-        // Create a new client
-        ServiceLogger.LOGGER.info("Building client...");
-        Client client = ClientBuilder.newClient();
-        client.register(JacksonFeature.class);
-
-        // Create a WebTarget to send a request to
-        ServiceLogger.LOGGER.info("Building WebTarget...");
-        WebTarget webTarget = client.target(newServicePath).path(newEndpointPath);
-
-        // Create an InvocationBuilder to create the HTTP request (bundle request)
-        ServiceLogger.LOGGER.info("Starting invocation builder...");
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-
-        // Send the request to /idm/privilege and save it to a Response
-        ServiceLogger.LOGGER.info("Sending request...");
-        Response response = invocationBuilder.post(Entity.entity(privRequestModel, MediaType.APPLICATION_JSON));
-        ServiceLogger.LOGGER.info("Request sent.");
-
-        ServiceLogger.LOGGER.info("Received status " + response.getStatus());
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonText = response.readEntity(String.class);
-            privResponseModel = mapper.readValue(jsonText, PrivilegeResponseModel.class);
-            ServiceLogger.LOGGER.info("Successfully mapped response to POJO.");
-        }
-        catch (IOException e) {
-            ServiceLogger.LOGGER.warning("Unable to map response to POJO.");
-        }
-
-        // Do work with data contained in response model
-        ServiceLogger.LOGGER.info("priv resultCode: "+privResponseModel.getRESULTCODE());
-        return privResponseModel.getRESULTCODE();
-    }
 }

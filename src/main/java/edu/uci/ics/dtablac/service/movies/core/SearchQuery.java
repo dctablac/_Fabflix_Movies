@@ -8,7 +8,7 @@ public class SearchQuery {
 
     public static String buildSearchQuery(ArrayList<String> requestQueryFields, Integer privilegeRC) {
 
-        String SELECT = "SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR, p.name AS DIRECTOR," +
+        String SELECT = "SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR, p.name AS DIRECTOR," +
                         " m.rating AS RATING, m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH," +
                         " m.hidden AS HIDDEN";
         String FROM = " FROM movie as m";
@@ -46,21 +46,26 @@ public class SearchQuery {
         if (genre != null) {
             WHERE += " && g.name LIKE '%" + genre + "%'";
         }
-        if (hidden != null && privilegeRC == 140) {
-            WHERE += " && hidden = " + hidden;
+        if (hidden != null) { // if movies need to be hidden
+            WHERE += " && hidden = 0";
         }
 
         if (limit != null) {
             LIMIT = " LIMIT "+limit;
         }
         if (offset != null) {
-            OFFSET = " OFFSET "+offset; // TODO: Equation for offset
+            OFFSET = " OFFSET "+offset;
         }
         if (orderby != null) {
-            ORDERBY = " ORDER BY "+orderby;
-        }
-        if (direction != null) {
-            ORDERBY += " "+direction;
+            if (orderby.equals("title")) {
+                ORDERBY = " ORDER BY "+orderby+" "+direction+", rating desc";
+            }
+            if (orderby.equals("rating")) {
+                ORDERBY = " ORDER BY "+orderby+" "+direction+", title asc";
+            }
+            if (orderby.equals("year")) {
+                ORDERBY = " ORDER BY "+orderby+" "+direction+", rating desc";
+            }
         }
         return SELECT + FROM + JOIN + WHERE + ORDERBY + LIMIT + OFFSET + ";";
     }

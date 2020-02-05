@@ -26,13 +26,8 @@ public class BrowseQuery {
         for (int i = 0; i < count; i++) {
             JOIN += String.format( " INNER JOIN keyword_in_movie AS kim%d ON m.movie_id = kim%d.movie_id INNER JOIN keyword AS k%d ON kim%d.keyword_id = k%d.keyword_id",i,i,i,i,i);
             WHERE += String.format(" && k%d.name = '%s'", i, parsedPhrases[i]);
-            System.err.println("loop");
         }
-        System.err.println("out of loop");
-/*
-        if (hidden != null && privilegeRC == 140) {
-            WHERE += " && hidden = " + hidden;
-        }*/
+
         if (limit != null) {
             LIMIT = " LIMIT " + limit;
         }
@@ -40,12 +35,16 @@ public class BrowseQuery {
             OFFSET = " OFFSET " + offset;
         }
         if (orderby != null) {
-            ORDERBY = " ORDER BY " + orderby;
+            if (orderby.equals("title")) {
+                ORDERBY = " ORDER BY "+orderby+" "+direction+", rating desc";
+            }
+            if (orderby.equals("rating")) {
+                ORDERBY = " ORDER BY "+orderby+" "+direction+", title asc";
+            }
+            if (orderby.equals("year")) {
+                ORDERBY = " ORDER BY "+orderby+" "+direction+", rating desc";
+            }
         }
-        if (direction != null) {
-            ORDERBY += " "+direction;
-        }
-
          return SELECT + FROM + JOIN + WHERE  + ORDERBY + LIMIT + OFFSET +";";
     }
 }

@@ -30,10 +30,10 @@ public class MovieModel {
                       @JsonProperty(value = "title", required = true) String newTITLE,
                       @JsonProperty(value = "year", required = true) Integer newYEAR,
                       @JsonProperty(value = "director", required = true) String newDIRECTOR,
-                      @JsonProperty(value = "rating", required = true) float newRATING,
+                      @JsonProperty(value = "rating", required = true) Float newRATING,
                       @JsonProperty(value = "backdrop_path") String newBACKDROP_PATH,
                       @JsonProperty(value = "poster_path") String newPOSTER_PATH,
-                      @JsonProperty(value = "hidden") boolean newHIDDEN) {
+                      @JsonProperty(value = "hidden") Boolean newHIDDEN) {
         this.MOVIE_ID = newMOVIE_ID;
         this.TITLE = newTITLE;
         this.YEAR = newYEAR;
@@ -61,7 +61,7 @@ public class MovieModel {
         return DIRECTOR;
     }
     @JsonProperty(value = "rating")
-    public float getRATING() { return RATING; }
+    public Float getRATING() { return RATING; }
     @JsonProperty(value = "backdrop_path")
     public String getBACKDROP_PATH() {
         return BACKDROP_PATH;
@@ -71,39 +71,39 @@ public class MovieModel {
         return POSTER_PATH;
     }
     @JsonProperty(value = "hidden")
-    public boolean isHIDDEN() {
+    public Boolean isHIDDEN() {
         return HIDDEN;
     }
-
+    @JsonProperty(value = "movie_id")
     public void setMOVIE_ID(String MOVIE_ID) {
         this.MOVIE_ID = MOVIE_ID;
     }
-
+    @JsonProperty(value = "title")
     public void setTITLE(String TITLE) {
         this.TITLE = TITLE;
     }
-
+    @JsonProperty(value = "year")
     public void setYEAR(Integer YEAR) {
         this.YEAR = YEAR;
     }
-
+    @JsonProperty(value = "director")
     public void setDIRECTOR(String DIRECTOR) {
         this.DIRECTOR = DIRECTOR;
     }
-
-    public void setRATING(float RATING) {
+    @JsonProperty(value = "rating")
+    public void setRATING(Float RATING) {
         this.RATING = RATING;
     }
-
+    @JsonProperty(value = "backdrop_path")
     public void setBACKDROP_PATH(String BACKDROP_PATH) {
         this.BACKDROP_PATH = BACKDROP_PATH;
     }
-
+    @JsonProperty(value = "poster_path")
     public void setPOSTER_PATH(String POSTER_PATH) {
         this.POSTER_PATH = POSTER_PATH;
     }
-
-    public void setHIDDEN(boolean HIDDEN) {
+    @JsonProperty(value = "hidden")
+    public void setHIDDEN(Boolean HIDDEN) {
         this.HIDDEN = HIDDEN;
     }
 }
