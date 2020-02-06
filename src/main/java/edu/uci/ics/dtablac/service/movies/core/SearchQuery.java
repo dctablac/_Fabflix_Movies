@@ -40,7 +40,6 @@ public class SearchQuery {
             WHERE += " && p.name LIKE '%" + director + "%'\n";
         }
         if (genre != null) {
-            JOIN +=
             WHERE += " && g.name LIKE '%" + genre + "%'\n";
         }
         if (hidden != null) { // if movies need to be hidden

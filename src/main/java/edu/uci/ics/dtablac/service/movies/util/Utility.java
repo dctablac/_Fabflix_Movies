@@ -110,6 +110,13 @@ public class Utility {
         return ORDERBY;
     }
 
+    public static String checkPeopleOrderBy(String ORDERBY) {
+        if (ORDERBY == null || !(ORDERBY.equals("name") || ORDERBY.equals("birthday") || ORDERBY.equals("popularity"))) {
+            return "name";
+        }
+        return ORDERBY;
+    }
+
     public static String checkDirection(String DIRECTION) {
         if (DIRECTION == null || !(DIRECTION.equals("asc") || DIRECTION.equals("desc"))) {
             return "asc";
