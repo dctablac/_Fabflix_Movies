@@ -104,14 +104,16 @@ public class GetByMovieIDPage {
                     director = rsMovieInfo.getString("DIRECTOR");
                     rating = rsMovieInfo.getFloat("RATING");
                     num_votes = rsMovieInfo.getInt("NUM_VOTES");
+                    // move below items to test spot
+                    budget = rsMovieInfo.getString("BUDGET");
+                    revenue = rsMovieInfo.getString("REVENUE");
+                    overview = rsMovieInfo.getString("OVERVIEW");
+                    backdrop_path = rsMovieInfo.getString("BACKDROP_PATH");
+                    poster_path = rsMovieInfo.getString("POSTER_PATH");
 
                     // If user not privileged, remain null
                     if (privilegeRC == 140) {
-                        budget = rsMovieInfo.getString("BUDGET");
-                        revenue = rsMovieInfo.getString("REVENUE");
-                        overview = rsMovieInfo.getString("OVERVIEW");
-                        backdrop_path = rsMovieInfo.getString("BACKDROP_PATH");
-                        poster_path = rsMovieInfo.getString("POSTER_PATH");
+                        // test
                         hidden = rsMovieInfo.getBoolean("HIDDEN");
                     }
                 }

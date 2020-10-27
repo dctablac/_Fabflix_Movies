@@ -106,11 +106,10 @@ public class SearchPage {
                 Boolean hidden = Boolean.parseBoolean(rs.getString("HIDDEN"));
                 newMovie.setHIDDEN(hidden);
                 if (privilegeRC != 140) {
-                    newMovie.setHIDDEN(null);
-                    newMovie.setPOSTER_PATH(null);
-                    newMovie.setBACKDROP_PATH(null);
+                    if (!hidden) {
+                        movies.add(newMovie);
+                    }
                 }
-                movies.add(newMovie);
             }
             Object[] moviesArray = movies.toArray();
             if (moviesArray.length == 0) {

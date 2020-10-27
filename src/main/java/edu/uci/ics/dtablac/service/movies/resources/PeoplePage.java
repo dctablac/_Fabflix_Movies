@@ -1,5 +1,8 @@
 package edu.uci.ics.dtablac.service.movies.resources;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uci.ics.dtablac.service.movies.MoviesService;
 import edu.uci.ics.dtablac.service.movies.configs.IdmConfigs;
 import edu.uci.ics.dtablac.service.movies.core.PeopleSearchQuery;
@@ -9,9 +12,8 @@ import edu.uci.ics.dtablac.service.movies.logger.ServiceLogger;
 import edu.uci.ics.dtablac.service.movies.models.MovieModel;
 import edu.uci.ics.dtablac.service.movies.models.SearchResponseModel;
 import edu.uci.ics.dtablac.service.movies.models.PeopleSearchModel;
-import edu.uci.ics.dtablac.service.movies.models.data.PeopleSearchResponseModel;
-import edu.uci.ics.dtablac.service.movies.models.data.PersonDetailModel;
-import edu.uci.ics.dtablac.service.movies.models.data.PersonDetailResponseModel;
+import edu.uci.ics.dtablac.service.movies.models.base.ResponseModel;
+import edu.uci.ics.dtablac.service.movies.models.data.*;
 import edu.uci.ics.dtablac.service.movies.util.Utility;
 
 import javax.ws.rs.*;
@@ -19,6 +21,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -276,4 +279,100 @@ public class PeoplePage {
         return Utility.headerResponse(responseModel, EMAIL, SESSION_ID, TRANSACTION_ID);
     }
 
+    @Path("update")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response peopleUpdate(@Context HttpHeaders headers, String jsonText) {
+        // Headers
+        String EMAIL = headers.getHeaderString("email");
+        String SESSION_ID = headers.getHeaderString("session_id");
+        String TRANSACTION_ID = headers.getHeaderString("transaction_id");
+
+        // Mapper and models
+        ResponseModel responseModel = null;
+        PersonUpdateRequestModel requestModel;
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Path to privilege
+        IdmConfigs idmConfigs = MoviesService.getIdmConfigs();
+        String servicePath = Utility.getServicePath(idmConfigs);
+        String endpointPath = idmConfigs.getPrivilegePath();
+
+        // Check privilege resultcode
+        if (Utility.getPrivilegeLevel(servicePath, endpointPath, EMAIL, 3) != 140) {
+            responseModel = new ResponseModel(224, "Could not update person.");
+        }
+        else {
+            // Attempt to update the people table
+            try {
+                requestModel = mapper.readValue(jsonText, PersonUpdateRequestModel.class);
+
+                PersonQuery query = new PersonQuery();
+                int affected_people = query.sendPersonUpdate(requestModel);
+                if (affected_people == 0) { // Zero people were updated.
+                    responseModel = new ResponseModel(223, "Person does not exist.");
+                } else {
+                    responseModel = new ResponseModel(225, "Person successfully updated.");
+                }
+
+            } catch (IOException e) {
+                if (e instanceof JsonParseException) {
+                    responseModel = new ResponseModel(-3, "JSON parse exception.");
+                } else if (e instanceof JsonMappingException) {
+                    responseModel = new ResponseModel(-2, "JSON mapping exception.");
+                }
+            }
+        }
+        return Utility.headerResponse(responseModel, EMAIL, SESSION_ID, TRANSACTION_ID);
+    }
+
+    @Path("add")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPeople(@Context HttpHeaders headers, String jsonText) {
+        // Headers
+        String EMAIL = headers.getHeaderString("email");
+        String SESSION_ID = headers.getHeaderString("session_id");
+        String TRANSACTION_ID = headers.getHeaderString("transaction_id");
+
+        // Mapper and models
+        ObjectMapper mapper = new ObjectMapper();
+        ResponseModel responseModel = null;
+        PersonAddRequestModel requestModel;
+
+        // Path to privilege
+        IdmConfigs idmConfigs = MoviesService.getIdmConfigs();
+        String servicePath = Utility.getServicePath(idmConfigs);
+        String endpointPath = idmConfigs.getPrivilegePath();
+
+        // Not privileged to edit information
+        if (Utility.getPrivilegeLevel(servicePath, endpointPath, EMAIL, 3) != 140) {
+            responseModel = new ResponseModel(227, "Could not add person.");
+        }
+        else {
+            try {
+                requestModel = mapper.readValue(jsonText, PersonAddRequestModel.class);
+
+                PersonQuery query = new PersonQuery();
+                int add_success = query.sendPersonAddUpdate(requestModel);
+                ServiceLogger.LOGGER.warning(String.format("%d",add_success));
+
+                if (add_success == 0) { // Person could not be added
+                    responseModel = new ResponseModel(226, "Person ID already in use.");
+                }
+                else {
+                    responseModel = new ResponseModel(228, "Person successfully added.");
+                }
+            } catch (IOException e) {
+                if (e instanceof JsonParseException) {
+                    responseModel = new ResponseModel(-3, "JSON parse exception.");
+                } else if (e instanceof JsonMappingException) {
+                    responseModel = new ResponseModel(-2, "JSON mapping exception.");
+                }
+            }
+        }
+        return Utility.headerResponse(responseModel, EMAIL, SESSION_ID, TRANSACTION_ID);
+    }
 }

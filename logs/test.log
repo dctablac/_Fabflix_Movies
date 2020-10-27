@@ -1,0 +1,457 @@
+[2020/09/11 20:37:12][CONFIG][initService]  Starting service...
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Scheme: http://
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Hostname: 0.0.0.0
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Port: 12347
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Path: /api/movies
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Logger output directory: ./logs/
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Database hostname: localhost
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Database port: 3306
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Database username: root
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Database password provided? true
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Database name: fabflix_movies
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Database driver: com.mysql.cj.jdbc.Driver
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  Database connection settings: ?autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=PST
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  IDM Scheme: http://
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  IDM Hostname: 0.0.0.0
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  IDM Port: 12346
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  IDM Path: /api/idm
+[2020/09/11 20:37:12][CONFIG][currentConfigs]  IDM Privilege Path: /privilege
+[2020/09/11 20:37:12][CONFIG][connectToDatabase]  Connecting to database...
+[2020/09/11 20:37:12][CONFIG][connectToDatabase]  Database URL: jdbc:mysql://localhost:3306/fabflix_movies?autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=PST
+[2020/09/11 20:37:12][CONFIG][connectToDatabase]  Connected to database: jdbc:mysql://localhost:3306/fabflix_movies?autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=PST
+[2020/09/11 20:37:12][CONFIG][initHTTPServer]  Initializing HTTP server...
+[2020/09/11 20:37:12][CONFIG][initHTTPServer]  Building URI from configs...
+[2020/09/11 20:37:12][CONFIG][initHTTPServer]  Final URI: http://0.0.0.0:12347/api/movies
+[2020/09/11 20:37:12][CONFIG][initHTTPServer]  Set Jersey resources.
+[2020/09/11 20:37:12][CONFIG][initHTTPServer]  Set Jackson as serializer.
+[2020/09/11 20:37:12][CONFIG][initHTTPServer]  Starting HTTP server...
+[2020/09/11 20:37:13][CONFIG][initHTTPServer]  HTTP server started.
+[2020/09/11 20:37:13][CONFIG][initService]  Service initialized.
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:39:50][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:39:50][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && g.name LIKE '%action%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 10
+ OFFSET 0
+;
+[2020/09/11 20:39:50][INFO][search]  Query succeeded.
+[2020/09/11 20:39:50][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:39:59][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:39:59][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && g.name LIKE '%science fiction%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 10
+ OFFSET 0
+;
+[2020/09/11 20:39:59][INFO][search]  Query succeeded.
+[2020/09/11 20:39:59][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:40:07][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:40:07][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && g.name LIKE '%science fiction%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 100
+ OFFSET 0
+;
+[2020/09/11 20:40:07][INFO][search]  Query succeeded.
+[2020/09/11 20:40:07][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:40:25][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:40:25][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && title LIKE '%avengers%'
+ && g.name LIKE '%science fiction%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 100
+ OFFSET 0
+;
+[2020/09/11 20:40:25][INFO][search]  Query succeeded.
+[2020/09/11 20:40:25][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:40:33][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:40:33][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && title LIKE '%avengers%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 100
+ OFFSET 0
+;
+[2020/09/11 20:40:33][INFO][search]  Query succeeded.
+[2020/09/11 20:40:33][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:41:14][INFO][prepareThumbnailQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+       m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH
+FROM movie as m
+WHERE m.movie_id = 'tt0118073'
+;
+[2020/09/11 20:41:14][INFO][prepareThumbnailQuery]  Query succeeded.
+[2020/09/11 20:41:14][INFO][thumbnail]  Found movies with serach parameters.
+[2020/09/11 20:41:19][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:41:19][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:41:19][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:41:19][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:41:19][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:41:20][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:41:20][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:41:20][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:41:20][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:41:20][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && title LIKE '%avengers%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 10
+ OFFSET 0
+;
+[2020/09/11 20:41:20][INFO][search]  Query succeeded.
+[2020/09/11 20:41:20][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:45:50][INFO][prepareThumbnailQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+       m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH
+FROM movie as m
+WHERE m.movie_id = 'tt0118073'
+;
+[2020/09/11 20:45:50][INFO][prepareThumbnailQuery]  Query succeeded.
+[2020/09/11 20:45:50][INFO][thumbnail]  Found movies with serach parameters.
+[2020/09/11 20:46:01][WARNING][thumbnail]  No movies found with search parameters.
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:46:05][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:46:05][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && title LIKE '%star wars%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 10
+ OFFSET 0
+;
+[2020/09/11 20:46:05][INFO][search]  Query succeeded.
+[2020/09/11 20:46:05][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:46:08][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:46:08][INFO][sendMovieIDQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+m.year AS YEAR, p.name AS DIRECTOR,
+m.rating AS RATING, m.num_votes AS NUM_VOTES,
+m.budget AS BUDGET, m.revenue AS REVENUE,
+m.overview AS OVERVIEW, m.backdrop_path AS BACKDROP_PATH,
+m.poster_path AS POSTER_PATH, m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN person AS p
+    ON m.director_id = p.person_id
+WHERE 1=1 && m.movie_id = 'tt3748528';
+[2020/09/11 20:46:08][INFO][sendMovieIDQuery]  Query succeeded.
+[2020/09/11 20:46:08][INFO][sendMovieIDQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT g.genre_id AS GENRE_ID, g.name AS GNAME
+FROM movie as m
+INNER JOIN genre_in_movie AS gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+WHERE 1=1 && m.movie_id = 'tt3748528';
+[2020/09/11 20:46:08][INFO][sendMovieIDQuery]  Query succeeded.
+[2020/09/11 20:46:08][INFO][sendMovieIDQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT p.person_id AS PERSON_ID, p.name AS PNAME
+FROM movie as m
+INNER JOIN person_in_movie AS pim
+    ON pim.movie_id = m.movie_id
+INNER JOIN person AS p
+    ON pim.person_id = p.person_id
+WHERE 1=1 && m.movie_id = 'tt3748528';
+[2020/09/11 20:46:08][INFO][sendMovieIDQuery]  Query succeeded.
+[2020/09/11 20:46:15][INFO][prepareThumbnailQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+       m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH
+FROM movie as m
+WHERE m.movie_id = 'tt3748528'
+;
+[2020/09/11 20:46:15][INFO][prepareThumbnailQuery]  Query succeeded.
+[2020/09/11 20:46:15][INFO][thumbnail]  Found movies with serach parameters.
+[2020/09/11 20:46:22][INFO][prepareThumbnailQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+       m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH
+FROM movie as m
+WHERE m.movie_id = 'tt3748528'
+;
+[2020/09/11 20:46:22][INFO][prepareThumbnailQuery]  Query succeeded.
+[2020/09/11 20:46:22][INFO][thumbnail]  Found movies with serach parameters.
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:46:37][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:46:37][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && title LIKE '%dark knight%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 10
+ OFFSET 0
+;
+[2020/09/11 20:46:37][INFO][search]  Query succeeded.
+[2020/09/11 20:46:37][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:46:39][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:46:39][INFO][sendMovieIDQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+m.year AS YEAR, p.name AS DIRECTOR,
+m.rating AS RATING, m.num_votes AS NUM_VOTES,
+m.budget AS BUDGET, m.revenue AS REVENUE,
+m.overview AS OVERVIEW, m.backdrop_path AS BACKDROP_PATH,
+m.poster_path AS POSTER_PATH, m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN person AS p
+    ON m.director_id = p.person_id
+WHERE 1=1 && m.movie_id = 'tt1345836';
+[2020/09/11 20:46:39][INFO][sendMovieIDQuery]  Query succeeded.
+[2020/09/11 20:46:39][INFO][sendMovieIDQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT g.genre_id AS GENRE_ID, g.name AS GNAME
+FROM movie as m
+INNER JOIN genre_in_movie AS gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+WHERE 1=1 && m.movie_id = 'tt1345836';
+[2020/09/11 20:46:39][INFO][sendMovieIDQuery]  Query succeeded.
+[2020/09/11 20:46:39][INFO][sendMovieIDQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT p.person_id AS PERSON_ID, p.name AS PNAME
+FROM movie as m
+INNER JOIN person_in_movie AS pim
+    ON pim.movie_id = m.movie_id
+INNER JOIN person AS p
+    ON pim.person_id = p.person_id
+WHERE 1=1 && m.movie_id = 'tt1345836';
+[2020/09/11 20:46:40][INFO][sendMovieIDQuery]  Query succeeded.
+[2020/09/11 20:46:46][INFO][prepareThumbnailQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+       m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH
+FROM movie as m
+WHERE m.movie_id = 'tt1345836'
+ || m.movie_id = 'tt3748528'
+;
+[2020/09/11 20:46:46][INFO][prepareThumbnailQuery]  Query succeeded.
+[2020/09/11 20:46:46][INFO][thumbnail]  Found movies with serach parameters.
+[2020/09/11 20:46:50][INFO][prepareThumbnailQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+       m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH
+FROM movie as m
+WHERE m.movie_id = 'tt1345836'
+ || m.movie_id = 'tt3748528'
+;
+[2020/09/11 20:46:50][INFO][prepareThumbnailQuery]  Query succeeded.
+[2020/09/11 20:46:50][INFO][thumbnail]  Found movies with serach parameters.
+[2020/09/11 20:46:59][INFO][prepareThumbnailQuery]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT m.movie_id AS MOVIE_ID, m.title AS TITLE,
+       m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH
+FROM movie as m
+WHERE m.movie_id = 'tt1345836'
+;
+[2020/09/11 20:46:59][INFO][prepareThumbnailQuery]  Query succeeded.
+[2020/09/11 20:46:59][INFO][thumbnail]  Found movies with serach parameters.
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:47:25][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:47:25][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && g.name LIKE '%science fiction%'
+ && hidden = 0
+ ORDER BY title asc, rating desc
+ LIMIT 10
+ OFFSET 0
+;
+[2020/09/11 20:47:25][INFO][search]  Query succeeded.
+[2020/09/11 20:47:25][INFO][search]  Found movie(s) with search parameters.
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  EMAIL: dctablac@gmail.com
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Building client...
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Building WebTarget...
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Starting invocation builder...
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Sending request...
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Request sent.
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Received status 200
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Successfully mapped response to POJO.
+[2020/09/11 20:47:31][INFO][getPrivilegeLevel]  Privilege resultCode: 141
+[2020/09/11 20:47:31][INFO][search]  Trying query: com.mysql.cj.jdbc.ClientPreparedStatement: 
+SELECT DISTINCT m.movie_id AS MOVIE_ID, m.title AS TITLE, m.year AS YEAR,
+                  p.name AS DIRECTOR,m.rating AS RATING,
+                  m.backdrop_path AS BACKDROP_PATH, m.poster_path AS POSTER_PATH,
+                  m.hidden AS HIDDEN
+FROM movie as m
+INNER JOIN genre_in_movie as gim
+    ON m.movie_id = gim.movie_id
+INNER JOIN genre as g
+    ON gim.genre_id = g.genre_id
+INNER JOIN person as p
+    ON m.director_id = p.person_id
+WHERE 1=1 && g.name LIKE '%science fiction%'
+ && hidden = 0
+ ORDER BY title desc, rating desc
+ LIMIT 100
+ OFFSET 0
+;
+[2020/09/11 20:47:31][INFO][search]  Query succeeded.
+[2020/09/11 20:47:31][INFO][search]  Found movie(s) with search parameters.

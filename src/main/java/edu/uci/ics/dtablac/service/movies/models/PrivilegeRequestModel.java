@@ -2,8 +2,11 @@ package edu.uci.ics.dtablac.service.movies.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PrivilegeRequestModel {
+
     @JsonProperty(value = "email", required = true)
     private String EMAIL;
     @JsonProperty(value = "plevel", required = true)

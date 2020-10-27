@@ -23,6 +23,8 @@ public class Utility {
         PrivilegeRequestModel privRequestModel = new PrivilegeRequestModel(email, plvl);
         PrivilegeResponseModel privResponseModel = null;
 
+        ServiceLogger.LOGGER.info("EMAIL: "+email);
+
         // Create a new client
         ServiceLogger.LOGGER.info("Building client...");
         Client client = ClientBuilder.newClient();
@@ -125,10 +127,10 @@ public class Utility {
     }
 
     public static Integer checkOffset(Integer OFFSET, Integer LIMIT) {
-        if (OFFSET == null || !(OFFSET.equals(0) || OFFSET % LIMIT == 0)) {
+        if (OFFSET == null) {
             return 0;
         }
-        return OFFSET;
+        return OFFSET*LIMIT;
     }
 
     public static String getServicePath(IdmConfigs idmConfigs) {

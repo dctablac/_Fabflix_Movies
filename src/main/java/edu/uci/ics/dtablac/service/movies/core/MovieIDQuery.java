@@ -2,7 +2,11 @@ package edu.uci.ics.dtablac.service.movies.core;
 
 import edu.uci.ics.dtablac.service.movies.MoviesService;
 import edu.uci.ics.dtablac.service.movies.logger.ServiceLogger;
+import edu.uci.ics.dtablac.service.movies.models.data.MovieUpdateRequestModel;
+import edu.uci.ics.dtablac.service.movies.models.data.PersonAddRequestModel;
 
+import javax.xml.transform.Result;
+import javax.xml.ws.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,13 +47,119 @@ public class MovieIDQuery {
         return SELECT + FROM + JOIN + WHERE;
     }
 
+    // TODO: Match name with person table, add new person if not found in db.
+    public static PreparedStatement buildUpdateMovieQuery(MovieUpdateRequestModel requestModel) {
+        String UPDATE = "\nUPDATE movie\n";
+        String SET = "SET movie_id = ?";
+        String WHERE = "WHERE movie_id = ?";
+
+        String movie_id = requestModel.getMOVIE_ID();
+        String title = requestModel.getTITLE();
+        Integer year = requestModel.getYEAR();
+        String director = requestModel.getDIRECTOR();
+        Float rating = requestModel.getRATING();
+        Integer num_votes = requestModel.getNUM_VOTES();
+        String budget = requestModel.getBUDGET();
+        String revenue = requestModel.getREVENUE();
+        String overview = requestModel.getOVERVIEW();
+        String backdrop_path = requestModel.getBACKDROP_PATH();
+        String poster_path = requestModel.getPOSTER_PATH();
+        Boolean hidden = requestModel.isHIDDEN();
+
+        if (title != null) {
+            SET += String.format(", title = '%s'", title);
+        }
+        if (year != null) {
+            SET += String.format(", year = %d", year);
+        }
+        if (director != null) { // TODO: set director_id
+            ResultSet rs = MovieAddQuery.sendDirectorQuery(director);
+            try {
+                if (!rs.next()) {
+                    PersonQuery PQ = new PersonQuery();
+                    PersonAddRequestModel personAddRequestModel = new PersonAddRequestModel(null,
+                            director, null, null, null, null,
+                            null, null, null);
+                    PQ.sendPersonAddUpdate(personAddRequestModel);
+
+                    // Get person_id to set in movie as director_id
+                    rs = MovieAddQuery.sendDirectorQuery(director);
+                    rs.next();
+                    Integer director_id = rs.getInt("person_id");
+
+                    SET += String.format(", director_id = %d", director_id);
+                }
+                else { // person found
+                    SET += String.format(", director_id = %d", rs.getInt("person_id"));
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                ServiceLogger.LOGGER.warning("Could not add the director as a new person to the table.");
+            }
+        }
+        if (rating != null) {
+            SET += String.format(", num_votes = %d", num_votes);
+        }
+        if (budget != null) {
+            SET += String.format(", budget = '%s'", budget);
+        }
+        if (revenue != null) {
+            SET += String.format(", revenue = '%s'", revenue);
+        }
+        if (overview != null) {
+            SET += String.format(", overview = '%s'", overview);
+        }
+        if (backdrop_path != null) {
+            SET += String.format(", backdrop_path = '%s'", backdrop_path);
+        }
+        if (poster_path != null) {
+            SET += String.format(", poster_path = '%s'", poster_path);
+        }
+        if (hidden != null) {
+            SET += String.format(", hidden = %b", hidden);
+        }
+
+        SET += "\n";
+        WHERE += ";";
+        String query = UPDATE + SET + WHERE;
+
+        PreparedStatement ps = null;
+        try {
+            ps = MoviesService.getCon().prepareStatement(query);
+            ps.setString(1, movie_id);
+            ps.setString(2, movie_id);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            ServiceLogger.LOGGER.warning("Unable to build an update query for movie: "+movie_id);
+        }
+
+        return ps;
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public int sendMovieUpdate(MovieUpdateRequestModel requestModel) {
+        PreparedStatement ps = buildUpdateMovieQuery(requestModel);
+        int affected_entries = 0;
+        try {
+            ServiceLogger.LOGGER.info("Trying update: "+ps.toString());
+            affected_entries = ps.executeUpdate();
+            ServiceLogger.LOGGER.info("Query succeeded.");
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            ServiceLogger.LOGGER.warning("Update failed: Unable to update movie information.");
+        }
+        return affected_entries;
+    }
+
     public static ResultSet sendMovieIDQuery(String movie_id, boolean get_movie_info,
                                              boolean get_genres, boolean get_people) {
         String query = buildMovieIDQuery(get_movie_info, get_genres, get_people);
         ResultSet rs = null;
         try {
             PreparedStatement ps = MoviesService.getCon().prepareStatement(query);
-            System.out.println(ps.toString());
             ps.setString(1, movie_id);
             ServiceLogger.LOGGER.info("Trying query: " + ps.toString());
             rs = ps.executeQuery();
